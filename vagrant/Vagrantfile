@@ -3,11 +3,11 @@
 
 # Define how much memory your computer has in GB (e.g. 8, 16)
 # Larger nodes will be created if you have more.
-RAM_SIZE = 16
+RAM_SIZE = 8
 
 # Define how mnay CPU cores you have.
 # More powerful workers will be created if you have more
-CPU_CORES = 8
+CPU_CORES = 2
 
 # Internal network prefix for the VM network
 # See the documentation before changing this
@@ -129,9 +129,10 @@ Vagrant.configure("2") do |config|
   (1..NUM_WORKER_NODE).each do |i|
     config.vm.define "worker-#{i}" do |node|
       node.vm.provider "virtualbox" do |vb|
+        vb.customize "pre-boot", ["modifyvm", :id, "--cpus", 2]
         vb.name = "kubernetes-ha-worker-#{i}"
         vb.memory = RESOURCES["worker"]["ram"]
-        vb.cpus = RESOURCES["worker"]["cpu"]
+        #vb.cpus = RESOURCES["worker"]["cpu"]
       end
       node.vm.hostname = "worker-#{i}"
       node.vm.network :private_network, ip: IP_NW + "#{NODE_IP_START + i}"
